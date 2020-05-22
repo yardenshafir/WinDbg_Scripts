@@ -1,0 +1,2 @@
+dx @$inverted = *(nt!_INVERTED_FUNCTION_TABLE**)&nt!KeUserInvertedFunctionTable
+dx -g @$inverted->TableEntry->Take(@$inverted->CurrentSize)

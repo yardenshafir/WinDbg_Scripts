@@ -1,0 +1,4 @@
+dx @$tmpFile = Debugger.Utility.FileSystem.TempDirectory.OpenFile("log.txt")
+dx @$txtWriter = Debugger.Utility.FileSystem.CreateTextWriter(@$tmpFile)
+ba r4 nt!PsInitialSystemProcess "dx @$txtWriter.WriteLine(@$getsym(@$curstack.Frames[0].Attributes.InstructionOffset)); g"
+dx @$tmpFile.Close()

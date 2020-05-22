@@ -1,0 +1,13 @@
+# define this structure in header file (c:\temp\header.h):
+typedef struct _EX_CALLBACK_ROUTINE_BLOCK
+{
+    _EX_RUNDOWN_REF RundownProtect;
+    void* Function;
+    void* Context;
+} EX_CALLBACK_ROUTINE_BLOCK, *PEX_CALLBACK_ROUTINE_BLOCK;
+
+
+dx Debugger.Utility.Analysis.SyntheticTypes.ReadHeader("c:\\temp\\header.h", "nt")
+dx @$getCallbackRoutine = (a => Debugger.Utility.Analysis.SyntheticTypes.CreateInstance("_EX_CALLBACK_ROUTINE_BLOCK", (__int64)(a & ~0xf)))
+dx -r0 @$getsym = (x => Debugger.Utility.Control.ExecuteCommand(".printf\"%y\", " + ((__int64)x).ToDisplayString("x")))[0]
+dx ((void**[0x40])&nt!PspCreateProcessNotifyRoutine).Where(a => a != 0).Select(a => @$getsym(@$getCallbackRoutine(a).Function))

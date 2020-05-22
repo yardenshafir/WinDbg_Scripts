@@ -1,0 +1,5 @@
+dx -r0 @$GeneralLookaside = Debugger.Utility.Collections.FromListEntry(*(nt!_LIST_ENTRY*)&nt!ExPagedLookasideListHead, "nt!_GENERAL_LOOKASIDE", "ListEntry")
+dx -r0 @$lookasideAddr = @$GeneralLookaside.Select(l => ((__int64)&l).ToDisplayString("x"))
+dx -r0 @$extractBetween = ((x,y,z) => x.Substring(x.IndexOf(y) + y.Length, x.IndexOf(z) - x.IndexOf(y) - y.Length))
+dx -r0 @$extractWithSize = ((x,y,z) => x.Substring(x.IndexOf(y) + y.Length, z))
+dx -r0 @$poolData = @$lookasideAddr.Select(l => Debugger.Utility.Control.ExecuteCommand("!pool "+l+" 2")).Where(l => l[1].Length != 0x55 && l[1].Length != 0).Select(l => new {address = "0x" + @$extractBetween(l[1], "*", "size:"), tag = @$extractWithSize(l[1], "(Allocated) *", 4), tagDesc = l[2].Contains(",") ? @$extractBetween(l[2], ": ", ",") : l[2].Substring(l[2].IndexOf(":")+2), binary = l[2].Contains("Binary") ? l[2].Substring(l[2].IndexOf("Binary :")+9) : "unknown", size = "0x" + @$extractBetween(l[1], "size:", "previous size:").Replace(" ", "")})

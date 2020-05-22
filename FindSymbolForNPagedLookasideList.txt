@@ -1,0 +1,4 @@
+dx -r0 @$GeneralLookaside = Debugger.Utility.Collections.FromListEntry(*(nt!_LIST_ENTRY*)&nt!ExNPagedLookasideListHead, "nt!_GENERAL_LOOKASIDE", "ListEntry")
+dx -r0 @$lookasideAddr = @$GeneralLookaside.Select(l => ((__int64)&l).ToDisplayString("x"))
+dx -r0 @$extractBetween = ((x,y,z) => x.Substring(x.IndexOf(y) + y.Length, x.IndexOf(z) - x.IndexOf(y) - y.Length))
+dx -r2 @$symData = @$lookasideAddr.Select(l => new {addr = l, sym = Debugger.Utility.Control.ExecuteCommand("ln "+l)}).Where(l => l.sym.Count() > 3).Select(l => new {addr = l.addr, sym = @$extractBetween(l.sym[3], "   ", "|")})

@@ -1,0 +1,6 @@
+dx -r0 @$printLn = (a => Debugger.Utility.Control.ExecuteCommand("ln "+((__int64)a).ToDisplayString("x")))
+dx -r0 @$extractBetween = ((x,y,z) => x.Substring(x.IndexOf(y) + y.Length, x.IndexOf(z) - x.IndexOf(y) - y.Length))
+dx -r0 @$printSymbol = (a => @$extractBetween(@$printLn(a)[3], " ", "|"))
+dx -r0 @$apcsForThread = (t => new {TID = t.Id, Object = (void*)&t.KernelObject, Apcs = Debugger.Utility.Collections.FromListEntry(*(nt!_LIST_ENTRY*)&t.KernelObject.Tcb.ApcState.ApcListHead[0], "nt!_KAPC", "ApcListEntry").Select(a => new { Kernel = @$printSymbol(a.KernelRoutine), Rundown = @$printSymbol(a.RundownRoutine)})})
+dx -r0 @$procWithKernelApc = @$cursession.Processes.Select(p => new {Name = p.Name, PID = p.Id, Object = (void*)&p.KernelObject, ApcThreads = p.Threads.Where(t => t.KernelObject.Tcb.ApcState.KernelApcPending != 0)}).Where(p => p.ApcThreads.Count() != 0)
+dx -r6 @$procWithKernelApc.Select(p => new { Name = p.Name, PID = p.PID, Object = p.Object, ApcThreads = p.ApcThreads.Select(t => @$apcsForThread(t))})

@@ -1,0 +1,2 @@
+dx @$inverted = (nt!_INVERTED_FUNCTION_TABLE*)&nt!PsInvertedFunctionTable
+dx -g @$tableEntry = *(nt!_INVERTED_FUNCTION_TABLE_ENTRY(*)[0xbe])@$inverted->TableEntry

@@ -1,0 +1,5 @@
+dx -r0 @$rspId = 0x14
+dx -r0 @$rbpId = 0x15
+dx -r0 @$isMemWrite = (b => b.Instructions.Where(i => i.Operands.Count() > 1 && i.Operands[0].Attributes.IsOutput && i.Operands[0].Registers[0].Id != @$rspId && i.Operands[0].Registers[0].Id != @$rbpId && i.Operands[0].Attributes.IsMemoryReference))
+dx -r0 @$findMemWrite = (a => Debugger.Utility.Code.CreateDisassembler().DisassembleBlocks(a).Select(b => @$isMemWrite(b)))
+dx -r2 @$findMemWrite(&nt!ZwSetInformationProcess).Where(b => b.Count() != 0)
