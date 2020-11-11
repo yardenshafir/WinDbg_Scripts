@@ -1,0 +1,15 @@
+//
+// Print the first wait block in each process wait list
+//
+dx -g @$procWaits = @$cursession.Processes.Where(p => (__int64)&p.KernelObject.Pcb.Header.WaitListHead != (__int64)p.KernelObject.Pcb.Header.WaitListHead.Flink).Select(p => Debugger.Utility.Collections.FromListEntry(p.KernelObject.Pcb.Header.WaitListHead, "nt!_KWAIT_BLOCK", "WaitListEntry")[0]).Select(p => new { WaitType = p.WaitType, BlockState = p.BlockState, Thread = p.Thread, Dpc = p.Dpc, Object = p.Object, Name = ((char*)((nt!_EPROCESS*)p.Object)->ImageFileName).ToDisplayString("sb")})
+
+//
+// Find all processes that have wait blocks with WaitDpc type
+//
+dx @$dpcwaits = @$cursession.Processes.Where(p => (__int64)&p.KernelObject.Pcb.Header.WaitListHead != (__int64)p.KernelObject.Pcb.Header.WaitListHead.Flink && Debugger.Utility.Collections.FromListEntry(p.KernelObject.Pcb.Header.WaitListHead, "nt!_KWAIT_BLOCK", "WaitListEntry").Where(p => p.WaitType == 4).Count() != 0)
+
+//
+// Print information about wait blocks of type WaitDpc waiting on processes
+//
+dx -r0 @$getsym = (x => Debugger.Utility.Control.ExecuteCommand(".printf\"%y\", " + ((__int64)x).ToDisplayString("x")))
+dx -g Debugger.Utility.Collections.FromListEntry(@$dpcwaits.First().KernelObject.Pcb.Header.WaitListHead, "nt!_KWAIT_BLOCK", "WaitListEntry").Select(p => new { WaitType = p.WaitType, BlockState = p.BlockState, Thread = p.Thread, Dpc = p.Dpc, Object = p.Object, Name = ((char*)((nt!_EPROCESS*)p.Object)->ImageFileName).ToDisplayString("sb"), DpcTarget = (@$getsym(p.Dpc->DeferredRoutine))[0]})
