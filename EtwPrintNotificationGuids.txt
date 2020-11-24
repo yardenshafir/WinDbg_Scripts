@@ -1,0 +1,3 @@
+dx -r0 @$etwNotificationGuid = 1
+dx -r0 @$GuidTable = ((nt!_ESERVERSILO_GLOBALS*)&nt!PspHostSiloGlobals)->EtwSiloState->EtwpGuidHashTable
+dx -g @$GuidTable.Select(bucket => bucket.ListHead[@$etwNotificationGuid]).Where(list => list.Flink != &list).Select(list => (nt!_ETW_GUID_ENTRY*)(list.Flink)).Select(Entry => new { Guid = Entry->Guid, Refs = Entry->RefCount, SD = Entry->SecurityDescriptor, Reg = (nt!_ETW_REG_ENTRY*)Entry->RegListHead.Flink})
