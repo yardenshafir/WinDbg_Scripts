@@ -1,0 +1,9 @@
+# Prints a table of all processes, total number of modules loaded in them and number of modules whose path contains "System32"
+# Run in a kernel debugger session (first run .reload to get all paths) - 
+# having a small gap isn normal: ntkrnlmp.exe, hal.dll, kdnet.dll only contain a basename
+# Other processes might have their own DLLs loaded from "Program Files" or have DLLs injected by AVs such as Windows Defender
+dx -g @$cursession.Processes.Select(p => new {Name = p.Name, PID = p.Id, System32Modules = p.Modules.Where(m => m.Name.ToLower().Contains("system32")).Count(), TotalModules = p.Modules.Count()})
+
+# To print all the non-system32 modules in a specific process:
+dx @$pid = 0
+dx @$cursession.Processes[0].Modules.Where(m => m.Name.ToLower().Contains("system32") == false)
