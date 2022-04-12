@@ -1,0 +1,5 @@
+# This works on newer debugger builds to print the symbols for each registered routine with the syntax: (void(*)()).
+# The structure is not documenting so I'm hardcoding the offset of the routine pointer inside the callback block (offset 8).
+# Notice that the pointers need to be alined since they encode a reference number.
+
+dx ((__int64(*)[64])&nt!PspCreateProcessNotifyRoutine)->Where(p => p)->Select(p => (void(*)())(*(((__int64*)(p & ~0xf)) + 1)))
