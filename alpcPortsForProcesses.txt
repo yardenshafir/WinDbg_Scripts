@@ -1,0 +1,9 @@
+# Get all open ALPC ports for all processes. Pretty much like !alpc /lpp but for all processes, with much uglier output
+
+dx -r4 @$ports = @$cursession.Processes.Select(p => new {Name = p.Name, AlpcPorts = p.Io.Handles.Where(h => h.Type == "ALPC Port").Select(a => new {PortName = a.ObjectName, Port = (nt!_ALPC_PORT*)&a.Object.Body})}).Select(p => new {Name = p.Name, AlpcPortsCount = p.AlpcPorts.Count(), AlpcPorts = p.AlpcPorts})
+
+
+# Alternatively, run !alpc /lpp on all processes (slower but nicer output):
+
+dx @$getPortsForProcess = (p => Debugger.Utility.Control.ExecuteCommand("!alpc /lpp " + ((__int64)p).ToDisplayString("x")))
+dx -r3 @$cursession.Processes.Select(p => new {Name = p.Name, Ports = @$getPortsForProcess(&p.KernelObject)})
