@@ -1,0 +1,3 @@
+# Get all appcontainer processes (makred by Token.TokenFlags.LowBox (value == 0x4000)
+
+dx -g @$appcontainers = @$cursession.Processes.Select(p => new {Name = p.Name, Id = p.Id, ProcessObj = p, TokenFlags = ((nt!_TOKEN*)(p.KernelObject.Token.Object & ~0xf))->TokenFlags}).Where(p => (p.TokenFlags & 0x4000) == 0x4000)
