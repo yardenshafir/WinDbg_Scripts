@@ -1,0 +1,4 @@
+# Print a table of all the processes running with a token that has Redirection Trust mitigation enabled in full / audit mode
+# Only looks at primany token, not at impersonation token
+
+dx -g @$cursession.Processes.Select(p => new {Name = p.Name, RedirectionTrust = ((((nt!_TOKEN*)(p.KernelObject.Token.Object & ~0xf))->TokenFlags & 0x400000) == 0x400000), RedirectionTrustAudit = ((((nt!_TOKEN*)(p.KernelObject.Token.Object & ~0xf))->TokenFlags & 0x800000) == 0x800000)}).OrderByDescending(obj => obj.@"RedirectionTrustAudit").Where(p => p.RedirectionTrust || p.RedirectionTrustAudit)
