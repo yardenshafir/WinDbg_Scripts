@@ -1,0 +1,3 @@
+# get the 64-bit and 32-bit PEB for all WoW64 processes
+
+dx -g @$cursession.Processes.Where(p => p.KernelObject.WoW64Process).Select(p => new {Name = p.Name, Peb = p.KernelObject.Peb, Peb32 = p.KernelObject.WoW64Process->Peb})
