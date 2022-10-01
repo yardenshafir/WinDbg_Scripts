@@ -1,0 +1,1 @@
+dx -r2 @$cursession.Processes.Select(p => new {Name = p.Name, SecurityDomain = p.KernelObject.SecurityDomain}).GroupBy(p => p.SecurityDomain).Select(x => x.Select(p => p.Name)), 1000
