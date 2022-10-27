@@ -7,6 +7,11 @@ https://medium.com/@yardenshafir2/windbg-the-fun-way-part-1-2e4978791f9b  </br>
 https://medium.com/@yardenshafir2/windbg-the-fun-way-part-2-7a904cba5435
 
 ## Useful Commands and Syntax
+- <b>__iserror(x)</b>   
+Returns true if a statement throws an error.
+```
+dx @$curprocess.Io.Handles.Where(h => !__iserror(h.Type == "File") && h.Type == "File")
+```
 
 - <b>SelectMany</b>  
 Flattens a nested collection, for example runs a query on all threads in all processes and flattens the results
