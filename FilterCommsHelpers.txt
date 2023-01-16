@@ -1,0 +1,12 @@
+# helper method to enumerate the registered communication ports for a filter driver.
+#     filter - address of a filter driver
+dx @$enumPortsForFilter = (filter => Debugger.Utility.Collections.FromListEntry(((fltmgr!_FLT_FILTER*)filter)->PortList.mList, "fltmgr!_FLT_PORT_OBJECT", "FilterLink"))
+
+# helper method to find all the open handles to a file pointing to a specific device:
+#     proc - debugger data model process (such as @$cursession.Process[4]
+#     dev - address of a device object, such as the address of \FileSystem\Filters\FltMgrMsg
+dx @$getHandlesToDevice = ((proc, dev) => proc.Io.Handles.Where(h => h.Type == "File" && h.Object.UnderlyingObject.DeviceObject == dev))
+
+# helper method to get all the IRPs waiting on a communication port.
+#     port - address of a port, such as the ones returned from @$enumPortsForFilter
+dx @$getIrpList = (port => Debugger.Utility.Collections.FromListEntry(((fltmgr!_FLT_PORT_OBJECT*)port)->MsgQ.WaiterQ.mList, "nt!_IRP", "Tail.Overlay.ListEntry"))
