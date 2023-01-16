@@ -1,3 +1,0 @@
-# might need .reload first to load fltmge symbols
-
-dx -g @$cursession.Processes[4].Io.Handles.Where(h => !__iserror(h.Type == "FilterConnectionPort") && h.Type == "FilterConnectionPort").Select(h => new {Name = h.ObjectName, Object = (fltmgr!_FLT_SERVER_PORT_OBJECT*)(&h.Object.Body), NumberOfConnections = ((fltmgr!_FLT_SERVER_PORT_OBJECT*)(&h.Object.Body))->NumberOfConnections})
