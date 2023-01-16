@@ -10,3 +10,6 @@ dx @$getHandlesToDevice = ((proc, dev) => proc.Io.Handles.Where(h => h.Type == "
 # helper method to get all the IRPs waiting on a communication port.
 #     port - address of a port, such as the ones returned from @$enumPortsForFilter
 dx @$getIrpList = (port => Debugger.Utility.Collections.FromListEntry(((fltmgr!_FLT_PORT_OBJECT*)port)->MsgQ.WaiterQ.mList, "nt!_IRP", "Tail.Overlay.ListEntry"))
+
+# print all registered connection ports by iterating over the kernel handle table. Print the name and number of connections for each one.
+dx -g @$cursession.Processes[4].Io.Handles.Where(h => !__iserror(h.Type == "FilterConnectionPort") && h.Type == "FilterConnectionPort").Select(h => new {Name = h.ObjectName, Object = (fltmgr!_FLT_SERVER_PORT_OBJECT*)(&h.Object.Body), NumberOfConnections = ((fltmgr!_FLT_SERVER_PORT_OBJECT*)(&h.Object.Body))->NumberOfConnections})
