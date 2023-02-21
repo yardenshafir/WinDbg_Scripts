@@ -1,0 +1,3 @@
+dx @$getTokenTrustLabelSidForProcess = (p => ((nt!_TOKEN*)(p.KernelObject.Token.Object & ~0xf))->TrustLevelSid)
+dx @$parseSid = (s => Debugger.Utility.Control.ExecuteCommand("!sid " + ((__int64)s).ToDisplayString("x"))[0])
+dx -g @$cursession.Processes.Select(p => new {Name = p.Name, TrustLevelSid = @$getTokenTrustLabelSidForProcess(p)}).Where(p => p.TrustLevelSid).Select(p => new {Name = p.Name, TrustLevelSid = @$parseSid(p.TrustLevelSid)})
