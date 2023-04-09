@@ -1,4 +1,5 @@
 dx -r0 @$guidEntryIndex = 0n25
+dx -r0 @$etwNotificationGuid = 1
 dx -r0 @$GuidTable = ((nt!_ESERVERSILO_GLOBALS*)&nt!PspHostSiloGlobals)->EtwSiloState->EtwpGuidHashTable
 dx -r0 @$guidEntry = (nt!_ETW_GUID_ENTRY*)(@$GuidTable.Select(bucket => bucket.ListHead[@$etwNotificationGuid])[@$guidEntryIndex].Flink)
 dx -g Debugger.Utility.Collections.FromListEntry(@$guidEntry->RegListHead, "nt!_ETW_REG_ENTRY", "RegList").Select(r => new {Caller = r.Caller, SessionId = r.SessionId, Process = r.Process, ProcessName = ((char[15])r.Process->ImageFileName)->ToDisplayString("s"), Callback = r.Callback, CallbackContext = r.CallbackContext})
