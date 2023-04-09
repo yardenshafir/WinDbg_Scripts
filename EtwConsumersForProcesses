@@ -1,0 +1,2 @@
+dx -s @$etwConsumersForProcess = (p => p.Io.Handles.Where(h => h.Type == "EtwConsumer").Select(h => Debugger.Utility.Collections.FromListEntry(((nt!_ETW_REALTIME_CONSUMER*)&h.Object.Body)->Links, "nt!_WMI_LOGGER_CONTEXT", "Consumers").Select(l => new {Name = l->LoggerName, InstanceGuid = l->InstanceGuid, RealtimeLogfileName = l->RealtimeLogfileName})))
+dx -r5 @$cursession.Processes.Select(p => new {Name = p.Name, EtwConsumers = @$etwConsumersForProcess(p)})
