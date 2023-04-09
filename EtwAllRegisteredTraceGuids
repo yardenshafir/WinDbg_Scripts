@@ -1,0 +1,3 @@
+dx -r0 @$GuidTable = ((nt!_ESERVERSILO_GLOBALS*)&nt!PspHostSiloGlobals)->EtwSiloState->EtwpGuidHashTable
+dx -s @$nonEmptyTraceGuids = @$GuidTable.Select(bucket => bucket.ListHead[0]).Where(l => l.Flink != &l)
+dx -r2 @$nonEmptyTraceGuids.Select(l => Debugger.Utility.Collections.FromListEntry(l, "nt!_ETW_GUID_ENTRY", "GuidList").Select(g => g.Guid))
