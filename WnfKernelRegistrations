@@ -1,0 +1,5 @@
+# Dump the WNF state names that each process in the system is registered to.
+# Notice that the "Callback" field will be 0 for all user-mode registrations.
+
+dx @$getStateNameWnfSubsForProcess = (p => Debugger.Utility.Collections.FromListEntry(((nt!_WNF_PROCESS_CONTEXT*)p.KernelObject.WnfContext)->ProcessSubscriptionListHead, "nt!_WNF_SUBSCRIPTION", "ProcessSubscriptionListEntry"))
+dx -r4 @$cursession.Processes.Select(p => new {Name = p.Name, Subscriptions = @$getStateNameWnfSubsForProcess(p).Select(s => new {StateName = 0x41C64E6DA3BC0074 ^ (*(__int64*)&s.StateName), Callback = (void(*)())s.CallbackRoutine})}), x
