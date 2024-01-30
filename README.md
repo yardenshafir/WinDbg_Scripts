@@ -33,3 +33,24 @@ dx @$printSecurityDescriptor = (sd => Debugger.Utility.Control.ExecuteCommand("!
 ```
 dx @$curprocess.Threads.Select(t => (void(*)())t.KernelObject.StartAddress)
 ```
+
+## String Types and Conversions
+WinDbg uses regular, null terminated strings.
+That can be challenging when trying to compare them with Windows strings, which can be counted strings (ANSI or UNICODE strings) or wide strings.
+To fix that, you can cast Windows strings into "regular" strings with .ToDisplayString:
+- .ToDisplayString("s"): convert a char array (not a wide string) to a string. Outout string will be wrapped in double quotes.
+- .ToDisplayString("sb"): convert a char array (not a wide string) to a string. Outout string will not be wrapped in double quotes.
+- .ToDisplayString("su"): convert a wchar_t array (wide string) to a string. Outout string will be wrapped in double quotes.
+
+To convert a counted string to a basic string, convert the Buffer field of the counted string using .ToDisplayString(). For example, to convert an ANSI_STRING to a string:
+```
+dx (@$CountedString->Buffer).ToDisplayString("sb")
+```
+
+As another example, you can create a helper function to compare a user-defined path to the ObjectName field of an OBJECT_ATTRIBUTES structure. ObjectName is a wide string so use .ToDisplayString("su"), and wrap the requested string in double quotes to match the output received from .ToDisplayString("su").
+In this helper function, the two arguments are:
+- o: a pointer to an OBJECT_ATTRIBUTES structure
+- p: a string to be compared to the ObjectName field of the OBJECT_ATRIBUTES structure passed in argument o
+```
+@$comparePathFromObjAttr = ((o, p) => (((nt!_OBJECT_ATTRIBUTES*)o)->ObjectName->Buffer).ToDisplayString("su") == "\"" + p + "\"")
+```
