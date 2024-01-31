@@ -52,5 +52,5 @@ In this helper function, the two arguments are:
 - o: a pointer to an OBJECT_ATTRIBUTES structure
 - p: a string to be compared to the ObjectName field of the OBJECT_ATRIBUTES structure passed in argument o
 ```
-@$comparePathFromObjAttr = ((o, p) => (((nt!_OBJECT_ATTRIBUTES*)o)->ObjectName->Buffer).ToDisplayString("su") == "\"" + p + "\"")
+dx @$comparePathFromObjAttr = ((o, p) => (((nt!_OBJECT_ATTRIBUTES*)o)->ObjectName->Buffer).ToDisplayString("su") == "\"" + p + "\"")
 ```
