@@ -1,5 +1,17 @@
 ﻿"use strict";
 
+//
+// To use the script:
+// 1. Load SymbolBuilderComposition (clone and build from: https://github.com/microsoft/WinDbg-Samples/blob/master/TargetComposition/SymBuilder/Readme.txt)
+// 2. Fix function offset and size as needed in DefineNtDeviceIoControlFileSignature (current offset and size match 24H2 Preview build 10.026080.1)
+// 3. Call DefineNtDeviceIoControlFileSignature with: dx @$DefineNtDeviceIoControlFileSignature()
+// 4. Reload symbols: .reload
+// 5. Define breakpoint on NtDeviceIoControlFile: bp nt!NtDeviceIoControlFile "dx @$LogIoctlArgs(); g"
+// 6. Define breakpoint on end of NtDeviceIoControlFile: bp nt!NtDeviceIoControlFile+0x62 "dx @$LogIoctlOutput(); g"
+// 7. Let the machine run with "g"
+// 8. When you'd like to stop the trace and flush data to the file, call CloseLogFile: dx @$CloseLogFile()
+//
+
 function initializeScript()
 {
     return [new host.apiVersionSupport(1, 9),
@@ -13,19 +25,6 @@ function initializeScript()
 function invokeScript()
 {
 }
-
-//
-// To use the script:
-// 1. Load SymbolBuilderComposition (clone and build from: https://github.com/microsoft/WinDbg-Samples/blob/master/TargetComposition/SymBuilder/Readme.txt)
-// 2. Fix function offset and size as needed in DefineNtDeviceIoControlFileSignature (current offset and size match 24H2 Preview build 10.026080.1)
-// 3. Call DefineNtDeviceIoControlFileSignature with: dx @$DefineNtDeviceIoControlFileSignature()
-// 4. Reload symbols: .reload
-// 5. Define breakpoint on NtDeviceIoControlFile: bp nt!NtDeviceIoControlFile "dx @$LogIoctlArgs(); g"
-// 6. Define breakpoint on end of NtDeviceIoControlFile: bp nt!NtDeviceIoControlFile+0x62 "dx @$LogIoctlOutput(); g"
-// 7. Let the machine run with "g"
-// 8. When you'd like to stop the trace and flush data to the file, call CloseLogFile: dx @$CloseLogFile()
-//
-
 
 let sym = 0;
 let lastOutputBuffer = 0;
