@@ -147,11 +147,12 @@ function DefineNtDeviceIoControlFileSignature()
     {
         sym = host.namespace.Debugger.Utility.SymbolBuilder.CreateSymbols("nt", {AutoImportSymbols: true});
     }
-    // hardcode function address and size because I'm lazy
+    // hardcode function size because I'm lazy
+	let NtDeviceIoControlFileSize = 0x62;
     let psNtosBase = host.getModuleSymbolAddress("nt", "PsNtosImageBase");
     let ntosBase = host.memory.readMemoryValues(psNtosBase, 1, 8);
     let pNtDeviceIoControlFile = host.getModuleSymbolAddress("nt", "NtDeviceIoControlFile");
-    let ntDeviceIoControlSym = sym.Functions.Create("NtDeviceIoControlFile", "int", host.parseInt64(pNtDeviceIoControlFile, 16).subtract(ntosBase[0]), 0x62);
+    let ntDeviceIoControlSym = sym.Functions.Create("NtDeviceIoControlFile", "int", host.parseInt64(pNtDeviceIoControlFile, 16).subtract(ntosBase[0]), NtDeviceIoControlFileSize);
     let fileHandle = ntDeviceIoControlSym.Parameters.Add("FileHandle", "__int64");
     fileHandle.LiveRanges.Add(0, 8, "@rcx");
     let event = ntDeviceIoControlSym.Parameters.Add("Event", "__int64");
